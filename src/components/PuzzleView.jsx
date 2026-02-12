@@ -17,11 +17,16 @@ export default function PuzzleView() {
   const [showLore, setShowLore] = useState(true)
   const inputRef = useRef(null)
 
+  // Reset all state when puzzle id changes (navigating between cases)
   useEffect(() => {
-    if (puzzle && isSolved(puzzle.id)) {
-      setSolved(true)
-    }
-  }, [puzzle, isSolved])
+    setAnswer('')
+    setFeedback(null)
+    setHintsUsed(0)
+    setShaking(false)
+    setShowLore(true)
+    const currentPuzzle = puzzles.find(p => p.id === Number(id))
+    setSolved(currentPuzzle ? isSolved(currentPuzzle.id) : false)
+  }, [id])
 
   useEffect(() => {
     if (!showLore && inputRef.current) {
@@ -191,14 +196,7 @@ export default function PuzzleView() {
             {nextCase ? (
               <button
                 className="btn btn-primary"
-                onClick={() => {
-                  navigate(`/case/${nextCase.id}`)
-                  setAnswer('')
-                  setFeedback(null)
-                  setHintsUsed(0)
-                  setSolved(false)
-                  setShowLore(true)
-                }}
+                onClick={() => navigate(`/case/${nextCase.id}`)}
               >
                 Prossimo Caso →
               </button>
