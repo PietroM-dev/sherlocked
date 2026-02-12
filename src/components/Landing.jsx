@@ -43,55 +43,14 @@ export default function Landing() {
         </div>
 
         <div className="landing-actions">
-          {isReturning && nextUnsolvedCase ? (
-            <>
-              <button 
-                className="btn btn-primary"
-                onClick={() => navigate(`/case/${nextUnsolvedCase}`)}
-              >
-                <span className="btn-icon">🕵️</span>
-                Continua — Caso #{nextUnsolvedCase}
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => navigate('/cases')}
-              >
-                Vedi tutti i Casi
-              </button>
-            </>
-          ) : totalSolved === puzzles.length ? (
-            <>
-              <button 
-                className="btn btn-primary"
-                onClick={() => navigate('/victory')}
-              >
-                <span className="btn-icon">🏆</span>
-                Rivedi il Finale
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => navigate('/cases')}
-              >
-                Vedi tutti i Casi
-              </button>
-            </>
-          ) : (
-            <button 
-              className="btn btn-primary"
-              onClick={() => navigate('/cases')}
-            >
-              <span className="btn-icon">🕵️</span>
-              Inizia l'Indagine
-            </button>
-          )}
+          <button 
+            className="btn btn-primary"
+            onClick={() => navigate('/cases')}
+          >
+            <span className="btn-icon">🕵️</span>
+            {totalSolved > 0 ? 'Continua l\'Indagine' : 'Inizia l\'Indagine'}
+          </button>
         </div>
-
-        {isReturning && (
-          <div className="save-indicator">
-            <span className="save-icon">💾</span>
-            <span>Il tuo progresso è salvato automaticamente</span>
-          </div>
-        )}
 
         <div className="landing-quote">
           <blockquote>
