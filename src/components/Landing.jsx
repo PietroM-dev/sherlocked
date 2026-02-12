@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
+import puzzles from '../data/puzzles'
 
 export default function Landing() {
   const navigate = useNavigate()
-  const { totalSolved } = useProgress()
+  const { totalSolved, nextUnsolvedCase, lastVisitFormatted } = useProgress()
+  const isReturning = totalSolved > 0 && lastVisitFormatted
 
   return (
     <div className="landing">
@@ -14,30 +16,82 @@ export default function Landing() {
           <span className="title-icon">🔍</span>
           <span className="title-text">SHERLOCKED</span>
         </h1>
-        
-        <p className="landing-subtitle">
-          Ventiquattro enigmi. Una sola verità.<br />
-          Hai la mente per risolvere il caso?
-        </p>
+
+        {isReturning ? (
+          <div className="welcome-back">
+            <p className="welcome-back-text">
+              Bentornato, Detective.
+            </p>
+            <p className="welcome-back-sub">
+              Ultima visita: {lastVisitFormatted}
+            </p>
+          </div>
+        ) : (
+          <p className="landing-subtitle">
+            Ventiquattro enigmi. Una sola verità.<br />
+            Hai la mente per risolvere il caso?
+          </p>
+        )}
 
         <div className="landing-stats">
           {totalSolved > 0 && (
             <div className="stat-badge">
               <span className="stat-number">{totalSolved}</span>
-              <span className="stat-label">/ 24 casi risolti</span>
+              <span className="stat-label">/ {puzzles.length} casi risolti</span>
             </div>
           )}
         </div>
 
         <div className="landing-actions">
-          <button 
-            className="btn btn-primary"
-            onClick={() => navigate('/cases')}
-          >
-            <span className="btn-icon">🕵️</span>
-            {totalSolved > 0 ? 'Continua l\'Indagine' : 'Inizia l\'Indagine'}
-          </button>
+          {isReturning && nextUnsolvedCase ? (
+            <>
+              <button 
+                className="btn btn-primary"
+                onClick={() => navigate(`/case/${nextUnsolvedCase}`)}
+              >
+                <span className="btn-icon">🕵️</span>
+                Continua — Caso #{nextUnsolvedCase}
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => navigate('/cases')}
+              >
+                Vedi tutti i Casi
+              </button>
+            </>
+          ) : totalSolved === puzzles.length ? (
+            <>
+              <button 
+                className="btn btn-primary"
+                onClick={() => navigate('/victory')}
+              >
+                <span className="btn-icon">🏆</span>
+                Rivedi il Finale
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => navigate('/cases')}
+              >
+                Vedi tutti i Casi
+              </button>
+            </>
+          ) : (
+            <button 
+              className="btn btn-primary"
+              onClick={() => navigate('/cases')}
+            >
+              <span className="btn-icon">🕵️</span>
+              Inizia l'Indagine
+            </button>
+          )}
         </div>
+
+        {isReturning && (
+          <div className="save-indicator">
+            <span className="save-icon">💾</span>
+            <span>Il tuo progresso è salvato automaticamente</span>
+          </div>
+        )}
 
         <div className="landing-quote">
           <blockquote>

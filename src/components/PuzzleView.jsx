@@ -15,6 +15,7 @@ export default function PuzzleView() {
   const [solved, setSolved] = useState(false)
   const [shaking, setShaking] = useState(false)
   const [showLore, setShowLore] = useState(true)
+  const [showSaveToast, setShowSaveToast] = useState(false)
   const inputRef = useRef(null)
 
   // Reset all state when puzzle id changes (navigating between cases)
@@ -24,6 +25,7 @@ export default function PuzzleView() {
     setHintsUsed(0)
     setShaking(false)
     setShowLore(true)
+    setShowSaveToast(false)
     const currentPuzzle = puzzles.find(p => p.id === Number(id))
     setSolved(currentPuzzle ? isSolved(currentPuzzle.id) : false)
   }, [id])
@@ -76,6 +78,8 @@ export default function PuzzleView() {
       setSolved(true)
       solveCase(puzzle.id)
       setFeedback({ type: 'success', message: puzzle.successMessage })
+      setShowSaveToast(true)
+      setTimeout(() => setShowSaveToast(false), 3000)
     } else {
       setFeedback({ type: 'error', message: 'Non è la risposta corretta. Riprova...' })
       setShaking(true)
@@ -217,6 +221,13 @@ export default function PuzzleView() {
           </div>
         )}
       </div>
+
+      {showSaveToast && (
+        <div className="save-toast">
+          <span className="save-toast-icon">💾</span>
+          Progresso salvato
+        </div>
+      )}
     </div>
   )
 }
