@@ -16,7 +16,7 @@ export default function Landing() {
         </h1>
         
         <p className="landing-subtitle">
-          Otto enigmi. Una sola verità.<br />
+          Sedici enigmi. Una sola verità.<br />
           Hai la mente per risolvere il caso?
         </p>
 
@@ -24,7 +24,7 @@ export default function Landing() {
           {totalSolved > 0 && (
             <div className="stat-badge">
               <span className="stat-number">{totalSolved}</span>
-              <span className="stat-label">/ 8 casi risolti</span>
+              <span className="stat-label">/ 16 casi risolti</span>
             </div>
           )}
         </div>

@@ -134,12 +134,12 @@ const puzzles = [
   },
   {
     id: 8,
-    title: "Il Caso Finale",
+    title: "Il Caso Intermedio",
     subtitle: "Ogni mistero ha la sua soluzione",
     type: "riddle",
-    difficulty: 5,
-    icon: "🏆",
-    description: "L'ultimo enigma. Solo chi ha la mente di un vero detective può risolvere il caso.",
+    difficulty: 3,
+    icon: "🔮",
+    description: "Un enigma filosofico trovato nel diario del sospettato. La risposta apre un nuovo capitolo dell'indagine.",
     question: "Esisto solo quando mi cercano.\nScompaio nel momento in cui mi trovano.\nOgni detective vive per me.\nSenza di me, non ci sarebbe avventura.\n\nCosa sono?",
     answer: "mistero",
     acceptedAnswers: ["mistero", "il mistero", "un mistero", "enigma", "l'enigma"],
@@ -148,8 +148,160 @@ const puzzles = [
       "Quando vengo risolto, cesso di esistere...",
       "Holmes non potrebbe vivere senza di me."
     ],
-    successMessage: "\"Mistero\" — hai risolto il caso finale. Sei un vero detective, degno erede di Sherlock Holmes!",
-    lore: "Il caso è risolto. La verità è stata portata alla luce."
+    successMessage: "\"Mistero\" — ma la storia non finisce qui. Un nuovo fascicolo è apparso sulla scrivania del detective...",
+    lore: "Il diario del sospettato rivela che l'indagine è più profonda di quanto pensassimo."
+  },
+  {
+    id: 9,
+    title: "Il Codice Morse",
+    subtitle: "Punti e linee dal passato",
+    type: "morse",
+    difficulty: 2,
+    icon: "⚡",
+    description: "Una vecchia radio nella soffitta trasmette un messaggio in codice Morse. Usa la tabella per decifrarlo.",
+    question: "La radio trasmette:\n\n·−·· ··− −·−· ·\n\nTabella Morse:\nA ·−    B −···  C −·−·  D −··\nE ·     F ··−·  G −−·   H ····\nI ··    J ·−−−  K −·−   L ·−··\nM −−    N −·    O −−−   P ·−−·\nQ −−·−  R ·−·   S ···   T −\nU ··−   V ···−  W ·−−   X −··−\nY −·−−  Z −−··\n\nDecifra la parola.",
+    answer: "luce",
+    acceptedAnswers: ["luce", "la luce"],
+    hints: [
+      "Separa il messaggio in 4 lettere...",
+      "·−·· = L, ··− = U...",
+      "La parola ha 4 lettere e illumina il buio."
+    ],
+    successMessage: "\"Luce\" — il messaggio dalla radio. Sotto la luce della soffitta, si rivela una scritta al contrario...",
+    lore: "Nella soffitta della villa abbandonata, una radio gracchia un messaggio ripetuto da decenni."
+  },
+  {
+    id: 10,
+    title: "Lo Specchio del Tempo",
+    subtitle: "Non tutto è come appare",
+    type: "mirror",
+    difficulty: 2,
+    icon: "🪞",
+    description: "Uno specchio antico nella soffitta mostra una parola scritta al contrario. Leggila come si riflette.",
+    question: "Sullo specchio appare questa scritta:\n\n«  O  R  E  B  I  L  »\n\nLeggi la parola come riflessa nello specchio.",
+    answer: "libero",
+    acceptedAnswers: ["libero"],
+    hints: [
+      "Leggi le lettere da destra verso sinistra...",
+      "L-I-B-E-R-O...",
+      "Significa il contrario di 'prigioniero'."
+    ],
+    successMessage: "\"Libero\" — qualcuno voleva essere liberato. Lo specchio nascondeva una lettera dietro di sé...",
+    lore: "Lo specchio non riflette solo immagini. Dietro il vetro, qualcuno ha nascosto un messaggio."
+  },
+  {
+    id: 11,
+    title: "Il Paradosso del Barista",
+    subtitle: "La logica si nasconde dove meno te l'aspetti",
+    type: "lateral",
+    difficulty: 3,
+    icon: "🍸",
+    description: "Un testimone racconta una scena assurda avvenuta in un bar. La risposta è meno ovvia di quanto sembri.",
+    question: "Un uomo entra in un bar e chiede\nun bicchiere d'acqua.\n\nIl barista lo guarda, poi tira fuori\nuna pistola e gliela punta contro.\n\nL'uomo sorride, ringrazia ed esce.\n\nPerché l'uomo ha ringraziato?",
+    answer: "singhiozzo",
+    acceptedAnswers: ["singhiozzo", "il singhiozzo", "aveva il singhiozzo", "singhiozzava", "singiozzo"],
+    hints: [
+      "L'uomo non aveva sete in realtà...",
+      "Aveva un problema fisico che l'acqua avrebbe potuto risolvere...",
+      "Lo spavento della pistola ha risolto il suo problema."
+    ],
+    successMessage: "L'uomo aveva il singhiozzo! Lo spavento l'ha fatto passare, meglio di qualsiasi bicchiere d'acqua. Pensiero laterale, detective!",
+    lore: "Il barista interrogato rivela che il misterioso cliente aveva lasciato un biglietto con dei numeri."
+  },
+  {
+    id: 12,
+    title: "Il Codice del Telefono",
+    subtitle: "Tecnologia del passato, messaggi del presente",
+    type: "phone",
+    difficulty: 3,
+    icon: "📞",
+    description: "Un vecchio telefono a tastiera è stato trovato nella scena del crimine. L'ultimo messaggio digitato usa il sistema T9.",
+    question: "Sul vecchio telefono, ogni tasto corrisponde\na delle lettere:\n\n2=ABC  3=DEF  4=GHI  5=JKL\n6=MNO  7=PQRS  8=TUV  9=WXYZ\n\nL'ultimo messaggio digitato è:\n\n«  7 · 3 · 2 · 8 · 6  »\n\nUsa la prima lettera di ogni gruppo\nper decifrare la parola.",
+    answer: "reato",
+    acceptedAnswers: ["reato", "il reato", "un reato"],
+    hints: [
+      "Prendi la lettera più comune per ogni numero...",
+      "7=R, 3=E, 2=A...",
+      "È un sinonimo di 'crimine'."
+    ],
+    successMessage: "\"Reato\" — il messaggio dal telefono. Qualcuno stava confessando. Ma c'è ancora un labirinto da risolvere...",
+    lore: "Il telefono apparteneva a un informatore. I suoi messaggi portano a un luogo nascosto."
+  },
+  {
+    id: 13,
+    title: "Il Labirinto Segreto",
+    subtitle: "Le lettere formano un cammino",
+    type: "grid",
+    difficulty: 3,
+    icon: "🏛️",
+    description: "Sulle mura di un antico palazzo, una griglia di lettere nasconde una parola. Segui il percorso giusto.",
+    question: "Parti dalla S e muoviti nelle caselle\nadiacenti (→ ↓ ← ↑) per formare\nuna parola di 7 lettere:\n\n┌───┬───┬───┐\n│ S │ E │ G │\n├───┼───┼───┤\n│ O │ T │ R │\n├───┼───┼───┤\n│   │   │ E │\n└───┴───┴───┘\n\nQuale parola si forma?",
+    answer: "segreto",
+    acceptedAnswers: ["segreto", "il segreto", "un segreto"],
+    hints: [
+      "Parti da S in alto a sinistra...",
+      "S → E → G poi scendi...",
+      "S-E-G-R-E-T-O: il percorso fa una spirale."
+    ],
+    successMessage: "\"Segreto\" — il labirinto rivela la parola chiave. Dietro il muro c'era una stanza nascosta da secoli...",
+    lore: "Il palazzo nasconde una stanza segreta. La griglia sulle mura è la chiave per trovarla."
+  },
+  {
+    id: 14,
+    title: "Il Testimone Muto",
+    subtitle: "Tre sospettati, una sola verità",
+    type: "logic",
+    difficulty: 4,
+    icon: "🤫",
+    description: "Tre sospettati vengono interrogati. Solo uno dice la verità. La logica è la tua unica arma.",
+    question: "Tre sospettati: il Cuoco, il Giardiniere\ne il Maggiordomo.\n\n🧑‍🍳 Il Cuoco dice:\n   «Il Giardiniere è il colpevole.»\n\n🌿 Il Giardiniere dice:\n   «Il Maggiordomo è il colpevole.»\n\n🎩 Il Maggiordomo dice:\n   «Il Giardiniere mente.»\n\nSolo UNO di loro dice la verità.\nChi è il colpevole?",
+    answer: "maggiordomo",
+    acceptedAnswers: ["maggiordomo", "il maggiordomo"],
+    hints: [
+      "Se il Cuoco dicesse il vero, chi mentirebbe?",
+      "Se il Giardiniere dice la verità, allora il colpevole è il Maggiordomo. In quel caso il Cuoco mente (dice Giardiniere) e il Maggiordomo mente (dice che il Giardiniere mente, ma il Giardiniere dice la verità)...",
+      "Solo il Giardiniere dice la verità. La risposta inizia per M."
+    ],
+    successMessage: "Il Maggiordomo! Solo il Giardiniere diceva la verità. Logica deduttiva perfetta, detective.",
+    lore: "Il maggiordomo confessa sotto la pressione delle prove. Ma l'indagine rivela un complice ancora in libertà."
+  },
+  {
+    id: 15,
+    title: "La Trappola dei Numeri",
+    subtitle: "Non tutto segue le regole che credi",
+    type: "lateral",
+    difficulty: 4,
+    icon: "🪤",
+    description: "Un foglio con una serie di uguaglianze. Sembra semplice, ma la risposta non è quella che pensi.",
+    question: "Osserva attentamente:\n\n1  =  5\n2  =  25\n3  =  125\n4  =  625\n\n5  =  ?\n\nQual è il valore di 5?",
+    answer: "1",
+    acceptedAnswers: ["1", "uno"],
+    hints: [
+      "Non pensare ai pattern matematici...",
+      "Rileggi la PRIMA riga del problema...",
+      "Se 1 = 5, allora 5 = ?"
+    ],
+    successMessage: "La risposta è 1! Se 1=5, allora 5=1. Non era un pattern di potenze — era una trappola logica. Brillante!",
+    lore: "Il foglio era un test lasciato dal mandante. Solo chi pensa fuori dagli schemi può proseguire."
+  },
+  {
+    id: 16,
+    title: "La Resa dei Conti",
+    subtitle: "L'ultimo enigma chiude il cerchio",
+    type: "riddle",
+    difficulty: 5,
+    icon: "🏆",
+    description: "Il caso finale. Tutto si riduce a un'ultima domanda. La risposta è il nome di ciò che governa ogni cosa.",
+    question: "Non puoi vedermi, ma invecchi per causa mia.\nNon puoi fermarmi, ma tutti provano a farlo.\nGuarisco ogni ferita,\nma alla fine vinco sempre io.\n\nChe cosa sono?",
+    answer: "tempo",
+    acceptedAnswers: ["tempo", "il tempo", "lo scorrere del tempo", "time"],
+    hints: [
+      "Scorre in una sola direzione...",
+      "Gli orologi provano a misurarmi...",
+      "Si dice che guarisca ogni ferita."
+    ],
+    successMessage: "\"Il Tempo\" — l'unica forza che nessun criminale può sfuggire, e l'unica arma di ogni detective. Caso chiuso, per sempre.",
+    lore: "L'orologio della torre batte la mezzanotte. L'indagine è conclusa. La giustizia trionfa."
   }
 ]
 

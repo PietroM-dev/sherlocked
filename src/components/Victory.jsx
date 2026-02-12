@@ -51,7 +51,7 @@ export default function Victory() {
         </div>
         
         <p className="victory-text">
-          Hai risolto tutti gli 8 casi con successo.<br />
+          Hai risolto tutti i {puzzles.length} casi con successo.<br />
           La verità è stata portata alla luce e la giustizia è stata fatta.
         </p>
 

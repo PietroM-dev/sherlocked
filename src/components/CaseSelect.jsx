@@ -97,6 +97,12 @@ function getTypeLabel(type) {
     anagram: '🔤 Anagramma',
     math: '🧮 Logica Matematica',
     hidden: '📜 Messaggio Nascosto',
+    morse: '⚡ Codice Morse',
+    mirror: '🪞 Lettura Speculare',
+    lateral: '🧠 Pensiero Laterale',
+    phone: '📞 Codice Telefonico',
+    grid: '🏛️ Labirinto di Lettere',
+    logic: '🤫 Deduzione Logica',
   }
   return labels[type] || '🔍 Enigma'
 }
