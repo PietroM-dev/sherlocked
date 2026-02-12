@@ -1,11 +1,26 @@
+import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import puzzles from '../data/puzzles'
+import SecretToast from './SecretToast'
 
 export default function Landing() {
   const navigate = useNavigate()
-  const { totalSolved, nextUnsolvedCase, lastVisitFormatted } = useProgress()
+  const { totalSolved, lastVisitFormatted, unlockSecret, isSecretUnlocked } = useProgress()
   const isReturning = totalSolved > 0 && lastVisitFormatted
+
+  // Easter egg: click magnifying glass 5 times
+  const [lensClicks, setLensClicks] = useState(0)
+  const [showSecretToast, setShowSecretToast] = useState(false)
+
+  const handleLensClick = useCallback(() => {
+    const newCount = lensClicks + 1
+    setLensClicks(newCount)
+    if (newCount >= 5 && !isSecretUnlocked('lens')) {
+      unlockSecret('lens')
+      setShowSecretToast(true)
+    }
+  }, [lensClicks, unlockSecret, isSecretUnlocked])
 
   return (
     <div className="landing">
@@ -63,9 +78,22 @@ export default function Landing() {
 
       <div className="landing-decoration">
         <div className="deco-line" />
-        <div className="deco-magnifier">🔎</div>
+        <div
+          className={`deco-magnifier ${lensClicks > 0 ? 'clicked' : ''}`}
+          onClick={handleLensClick}
+          title=""
+          style={{ cursor: 'default' }}
+        >
+          🔎
+        </div>
         <div className="deco-line" />
       </div>
+
+      <SecretToast
+        show={showSecretToast}
+        secretName="L'Occhio del Detective"
+        onClose={() => setShowSecretToast(false)}
+      />
     </div>
   )
 }

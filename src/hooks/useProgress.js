@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const STORAGE_KEY = 'sherlocked-progress'
+const SECRETS_KEY = 'sherlocked-secrets'
 const VISIT_KEY = 'sherlocked-last-visit'
 
 export function useProgress() {
@@ -13,7 +14,16 @@ export function useProgress() {
     }
   })
 
-  const [lastVisit, setLastVisit] = useState(() => {
+  const [unlockedSecrets, setUnlockedSecrets] = useState(() => {
+    try {
+      const saved = localStorage.getItem(SECRETS_KEY)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  const [lastVisit] = useState(() => {
     try {
       return localStorage.getItem(VISIT_KEY) || null
     } catch {
@@ -21,15 +31,19 @@ export function useProgress() {
     }
   })
 
-  // Save progress to localStorage whenever it changes
+  // Save progress
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(solvedCases))
   }, [solvedCases])
 
-  // Update last visit timestamp on mount
+  // Save secrets
   useEffect(() => {
-    const now = new Date().toISOString()
-    localStorage.setItem(VISIT_KEY, now)
+    localStorage.setItem(SECRETS_KEY, JSON.stringify(unlockedSecrets))
+  }, [unlockedSecrets])
+
+  // Update last visit
+  useEffect(() => {
+    localStorage.setItem(VISIT_KEY, new Date().toISOString())
   }, [])
 
   const solveCase = (caseId) => {
@@ -46,14 +60,33 @@ export function useProgress() {
     return solvedCases.includes(caseId - 1)
   }
 
+  // Secret management
+  const unlockSecret = useCallback((triggerId) => {
+    setUnlockedSecrets(prev => {
+      if (prev.includes(triggerId)) return prev
+      return [...prev, triggerId]
+    })
+  }, [])
+
+  const isSecretUnlocked = useCallback((triggerId) => {
+    return unlockedSecrets.includes(triggerId)
+  }, [unlockedSecrets])
+
+  const isSecretNew = useCallback((triggerId) => {
+    // A secret is "new" if it's unlocked but the corresponding puzzle isn't solved yet
+    return unlockedSecrets.includes(triggerId) && !solvedCases.includes(`s${['konami', 'baker', 'lens', 'shadow'].indexOf(triggerId) + 1}`)
+  }, [unlockedSecrets, solvedCases])
+
   const resetProgress = () => {
     setSolvedCases([])
+    setUnlockedSecrets([])
     localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(SECRETS_KEY)
   }
 
-  const totalSolved = solvedCases.length
+  const totalSolved = solvedCases.filter(id => typeof id === 'number').length
+  const totalSecretsSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('s')).length
 
-  // Find the next unsolved case id
   const nextUnsolvedCase = (() => {
     for (let i = 1; i <= 24; i++) {
       if (!solvedCases.includes(i)) return i
@@ -61,7 +94,6 @@ export function useProgress() {
     return null
   })()
 
-  // Format the last visit date for display
   const lastVisitFormatted = (() => {
     if (!lastVisit) return null
     try {
@@ -88,8 +120,13 @@ export function useProgress() {
     solveCase,
     isSolved,
     isUnlocked,
+    unlockedSecrets,
+    unlockSecret,
+    isSecretUnlocked,
+    isSecretNew,
     resetProgress,
     totalSolved,
+    totalSecretsSolved,
     nextUnsolvedCase,
     lastVisit,
     lastVisitFormatted,

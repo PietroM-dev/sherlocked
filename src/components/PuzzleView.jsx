@@ -1,14 +1,26 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import puzzles from '../data/puzzles'
+import secretPuzzles from '../data/secretPuzzles'
+import SecretToast from './SecretToast'
+
+// Combined lookup for both regular and secret puzzles
+function findPuzzle(id) {
+  const numId = Number(id)
+  if (!isNaN(numId)) {
+    return puzzles.find(p => p.id === numId)
+  }
+  return secretPuzzles.find(p => p.id === id)
+}
 
 export default function PuzzleView() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { solveCase, isSolved, isUnlocked } = useProgress()
+  const { solveCase, isSolved, isUnlocked, unlockSecret, isSecretUnlocked } = useProgress()
 
-  const puzzle = puzzles.find(p => p.id === Number(id))
+  const puzzle = findPuzzle(id)
+  const isSecret = puzzle?.secret === true
   const [answer, setAnswer] = useState('')
   const [hintsUsed, setHintsUsed] = useState(0)
   const [feedback, setFeedback] = useState(null)
@@ -16,9 +28,10 @@ export default function PuzzleView() {
   const [shaking, setShaking] = useState(false)
   const [showLore, setShowLore] = useState(true)
   const [showSaveToast, setShowSaveToast] = useState(false)
+  const [showSecretToast, setShowSecretToast] = useState(false)
   const inputRef = useRef(null)
 
-  // Reset all state when puzzle id changes (navigating between cases)
+  // Reset all state when puzzle id changes
   useEffect(() => {
     setAnswer('')
     setFeedback(null)
@@ -26,7 +39,8 @@ export default function PuzzleView() {
     setShaking(false)
     setShowLore(true)
     setShowSaveToast(false)
-    const currentPuzzle = puzzles.find(p => p.id === Number(id))
+    setShowSecretToast(false)
+    const currentPuzzle = findPuzzle(id)
     setSolved(currentPuzzle ? isSolved(currentPuzzle.id) : false)
   }, [id])
 
@@ -35,6 +49,14 @@ export default function PuzzleView() {
       inputRef.current.focus()
     }
   }, [showLore])
+
+  // Easter egg: detect "221b" typed as answer
+  const handleBakerEgg = useCallback(() => {
+    if (!isSecretUnlocked('baker')) {
+      unlockSecret('baker')
+      setShowSecretToast(true)
+    }
+  }, [unlockSecret, isSecretUnlocked])
 
   if (!puzzle) {
     return (
@@ -49,7 +71,24 @@ export default function PuzzleView() {
     )
   }
 
-  if (!isUnlocked(puzzle.id) && !isSolved(puzzle.id)) {
+  // For secret puzzles, check if secret is unlocked
+  if (isSecret && !isSecretUnlocked(puzzle.secretTrigger)) {
+    return (
+      <div className="puzzle-view">
+        <div className="puzzle-locked">
+          <div className="locked-icon">🔒</div>
+          <h2>Fascicolo Classificato</h2>
+          <p>Questo fascicolo richiede un accesso speciale.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/cases')}>
+            Torna ai Casi
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // For regular puzzles, check unlock
+  if (!isSecret && !isUnlocked(puzzle.id) && !isSolved(puzzle.id)) {
     return (
       <div className="puzzle-view">
         <div className="puzzle-locked">
@@ -70,6 +109,13 @@ export default function PuzzleView() {
 
   const checkAnswer = () => {
     const normalizedInput = normalize(answer)
+
+    // Easter egg: check for "221b" in any regular puzzle
+    if (!isSecret && (normalizedInput === '221b' || normalizedInput === '221bbakerstreet')) {
+      handleBakerEgg()
+      return
+    }
+
     const isCorrect = puzzle.acceptedAnswers.some(
       accepted => normalize(accepted) === normalizedInput
     )
@@ -99,21 +145,24 @@ export default function PuzzleView() {
     }
   }
 
-  const nextCase = puzzles.find(p => p.id === puzzle.id + 1)
+  // Next case logic (only for regular puzzles)
+  const nextCase = isSecret ? null : puzzles.find(p => p.id === puzzle.id + 1)
 
   if (showLore) {
     return (
       <div className="puzzle-view">
-        <div className="lore-screen">
-          <div className="lore-case-number">Caso #{puzzle.id}</div>
+        <div className={`lore-screen ${isSecret ? 'lore-secret' : ''}`}>
+          <div className="lore-case-number">
+            {isSecret ? '🔓 Fascicolo Segreto' : `Caso #${puzzle.id}`}
+          </div>
           <h1 className="lore-title">{puzzle.title}</h1>
           <div className="lore-divider">
-            <span>◆</span>
+            <span>{isSecret ? '◆◆◆' : '◆'}</span>
           </div>
           <p className="lore-text">{puzzle.lore}</p>
           <p className="lore-description">{puzzle.description}</p>
           <button 
-            className="btn btn-primary"
+            className={`btn ${isSecret ? 'btn-secret' : 'btn-primary'}`}
             onClick={() => setShowLore(false)}
           >
             Esamina l'Enigma →
@@ -125,13 +174,15 @@ export default function PuzzleView() {
 
   return (
     <div className="puzzle-view">
-      <header className="puzzle-header">
+      <header className={`puzzle-header ${isSecret ? 'puzzle-header-secret' : ''}`}>
         <button className="btn-back" onClick={() => navigate('/cases')}>
           ← Casi
         </button>
         <div className="puzzle-header-center">
           <span className="puzzle-header-icon">{puzzle.icon}</span>
-          <span className="puzzle-header-title">Caso #{puzzle.id} — {puzzle.title}</span>
+          <span className="puzzle-header-title">
+            {isSecret ? `Segreto — ${puzzle.title}` : `Caso #${puzzle.id} — ${puzzle.title}`}
+          </span>
         </div>
         <div className="puzzle-header-right">
           <span className="difficulty-stars">
@@ -141,8 +192,10 @@ export default function PuzzleView() {
       </header>
 
       <div className="puzzle-content">
-        <div className="puzzle-question-card">
-          <div className="question-type-badge">{getTypeLabel(puzzle.type)}</div>
+        <div className={`puzzle-question-card ${isSecret ? 'secret-question-card' : ''}`}>
+          <div className="question-type-badge">
+            {isSecret ? `🔓 ${getTypeLabel(puzzle.type)}` : getTypeLabel(puzzle.type)}
+          </div>
           <pre className="puzzle-question">{puzzle.question}</pre>
         </div>
 
@@ -204,14 +257,14 @@ export default function PuzzleView() {
               >
                 Prossimo Caso →
               </button>
-            ) : (
+            ) : !isSecret ? (
               <button
                 className="btn btn-primary"
                 onClick={() => navigate('/victory')}
               >
                 🏆 Vedi il Finale
               </button>
-            )}
+            ) : null}
             <button
               className="btn btn-secondary"
               onClick={() => navigate('/cases')}
@@ -228,6 +281,12 @@ export default function PuzzleView() {
           Progresso salvato
         </div>
       )}
+
+      <SecretToast
+        show={showSecretToast}
+        secretName="Il Caso di Baker Street"
+        onClose={() => setShowSecretToast(false)}
+      />
     </div>
   )
 }
@@ -251,6 +310,7 @@ function getTypeLabel(type) {
     optimization: '🌉 Ottimizzazione',
     roman: '🏛️ Numeri Romani',
     multistep: '🏆 Enigma a Strati',
+    binary: '💀 Codice Binario',
   }
   return labels[type] || '🔍 Enigma'
 }

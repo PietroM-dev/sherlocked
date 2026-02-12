@@ -17,6 +17,9 @@
   --red-glow: rgba(201, 48, 44, 0.2);
   --green: #2d8a4e;
   --green-glow: rgba(45, 138, 78, 0.2);
+  --purple: #9b59b6;
+  --purple-dark: #7b2d8e;
+  --purple-glow: rgba(155, 89, 182, 0.15);
   --text-primary: #e8e4dc;
   --text-secondary: #9a9588;
   --text-dim: #5a574f;
@@ -1162,4 +1165,219 @@ body {
   .puzzle-question-card {
     padding: 1.5rem 1.25rem;
   }
+}
+
+/* ===========================
+   SECRET / EASTER EGG STYLES
+   =========================== */
+
+/* Secret Toast Overlay */
+.secret-toast-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  animation: secretOverlayIn 0.3s ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.secret-toast-overlay.exiting {
+  animation: secretOverlayOut 0.5s ease-in forwards;
+}
+
+.secret-toast {
+  background: var(--bg-card);
+  border: 2px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 2.5rem 3rem;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(155, 89, 182, 0.3), 0 0 120px rgba(155, 89, 182, 0.1);
+  animation: secretPulse 0.6s ease-out;
+  max-width: 400px;
+}
+
+.secret-toast-glitch {
+  margin-bottom: 1rem;
+}
+
+.secret-toast-icon {
+  font-size: 3rem;
+  animation: glitchIcon 0.5s ease-out;
+}
+
+.secret-toast-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 0.5rem;
+}
+
+.secret-toast-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.secret-toast-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+@keyframes secretOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes secretOverlayOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes secretPulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glitchIcon {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.3) rotate(10deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* Secret Section in CaseSelect */
+.secret-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.secret-section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 0.75rem;
+}
+
+.secret-section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple-dark), transparent);
+}
+
+.secret-section-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--purple);
+  white-space: nowrap;
+}
+
+.secret-section-subtitle {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+}
+
+/* Secret Card Styling */
+.case-card.secret-card {
+  border-color: rgba(155, 89, 182, 0.25);
+  background: linear-gradient(135deg, var(--bg-card), rgba(155, 89, 182, 0.05));
+}
+
+.case-card.secret-card::before {
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+  opacity: 0.5;
+}
+
+.case-card.secret-card:hover {
+  border-color: rgba(155, 89, 182, 0.5);
+  box-shadow: 0 12px 40px rgba(155, 89, 182, 0.15);
+}
+
+.case-card.secret-card.solved {
+  border-color: rgba(155, 89, 182, 0.4);
+}
+
+.case-card.secret-card .case-solved-badge {
+  background: var(--purple-glow);
+  border-color: rgba(155, 89, 182, 0.3);
+  color: var(--purple);
+}
+
+.secret-label {
+  color: var(--purple) !important;
+}
+
+.secret-trigger-badge {
+  color: var(--purple) !important;
+}
+
+/* Secret Puzzle View */
+.puzzle-header-secret {
+  border-bottom-color: rgba(155, 89, 182, 0.3);
+}
+
+.secret-question-card {
+  border-color: rgba(155, 89, 182, 0.25);
+  background: linear-gradient(135deg, var(--bg-card), rgba(155, 89, 182, 0.05));
+}
+
+.lore-secret .lore-title {
+  color: var(--purple);
+}
+
+.lore-secret .lore-divider {
+  color: var(--purple-dark);
+}
+
+.lore-secret .lore-case-number {
+  color: var(--purple);
+}
+
+.btn-secret {
+  background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+  color: white;
+  box-shadow: 0 4px 20px rgba(155, 89, 182, 0.25);
+}
+
+.btn-secret:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(155, 89, 182, 0.35);
+}
+
+/* Hidden easter egg element */
+.hidden-shadow {
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.03);
+  cursor: default;
+  user-select: none;
+  transition: color 0.3s;
+  padding: 12px;
+}
+
+.hidden-shadow:hover {
+  color: rgba(255, 255, 255, 0.08);
+}
+
+/* Magnifying glass click effect */
+.deco-magnifier.clicked {
+  animation: lensWobble 0.3s ease-out;
+}
+
+@keyframes lensWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
 }
