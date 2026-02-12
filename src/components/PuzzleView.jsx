@@ -29,6 +29,8 @@ export default function PuzzleView() {
   const [showLore, setShowLore] = useState(true)
   const [showSaveToast, setShowSaveToast] = useState(false)
   const [showSecretToast, setShowSecretToast] = useState(false)
+  const [showHiddenClue, setShowHiddenClue] = useState(false)
+  const [iconClicks, setIconClicks] = useState(0)
   const inputRef = useRef(null)
 
   // Reset all state when puzzle id changes
@@ -40,6 +42,8 @@ export default function PuzzleView() {
     setShowLore(true)
     setShowSaveToast(false)
     setShowSecretToast(false)
+    setShowHiddenClue(false)
+    setIconClicks(0)
     const currentPuzzle = findPuzzle(id)
     setSolved(currentPuzzle ? isSolved(currentPuzzle.id) : false)
   }, [id])
@@ -179,7 +183,18 @@ export default function PuzzleView() {
           ← Casi
         </button>
         <div className="puzzle-header-center">
-          <span className="puzzle-header-icon">{puzzle.icon}</span>
+          <span
+            className={`puzzle-header-icon ${iconClicks > 0 ? 'icon-tapped' : ''}`}
+            onClick={() => {
+              const newClicks = iconClicks + 1
+              setIconClicks(newClicks)
+              if (newClicks >= 3 && puzzle.hiddenClue) {
+                setShowHiddenClue(true)
+              }
+            }}
+          >
+            {puzzle.icon}
+          </span>
           <span className="puzzle-header-title">
             {isSecret ? `Segreto — ${puzzle.title}` : `Caso #${puzzle.id} — ${puzzle.title}`}
           </span>
@@ -198,6 +213,16 @@ export default function PuzzleView() {
           </div>
           <pre className="puzzle-question">{puzzle.question}</pre>
         </div>
+
+        {showHiddenClue && puzzle.hiddenClue && (
+          <div className="hidden-clue-card">
+            <div className="hidden-clue-header">
+              <span className="hidden-clue-icon">📌</span>
+              <span className="hidden-clue-label">Nota dell'investigatore precedente</span>
+            </div>
+            <p className="hidden-clue-text">"{puzzle.hiddenClue}"</p>
+          </div>
+        )}
 
         {!solved && (
           <div className={`puzzle-input-section ${shaking ? 'shake' : ''}`}>
