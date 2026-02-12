@@ -289,9 +289,9 @@ const puzzles = [
     title: "La Resa dei Conti",
     subtitle: "L'ultimo enigma chiude il cerchio",
     type: "riddle",
-    difficulty: 5,
-    icon: "🏆",
-    description: "Il caso finale. Tutto si riduce a un'ultima domanda. La risposta è il nome di ciò che governa ogni cosa.",
+    difficulty: 3,
+    icon: "🔮",
+    description: "Un enigma trovato nel covo del sospettato. La risposta apre un nuovo capitolo dell'indagine.",
     question: "Non puoi vedermi, ma invecchi per causa mia.\nNon puoi fermarmi, ma tutti provano a farlo.\nGuarisco ogni ferita,\nma alla fine vinco sempre io.\n\nChe cosa sono?",
     answer: "tempo",
     acceptedAnswers: ["tempo", "il tempo", "lo scorrere del tempo", "time"],
@@ -300,8 +300,160 @@ const puzzles = [
       "Gli orologi provano a misurarmi...",
       "Si dice che guarisca ogni ferita."
     ],
-    successMessage: "\"Il Tempo\" — l'unica forza che nessun criminale può sfuggire, e l'unica arma di ogni detective. Caso chiuso, per sempre.",
-    lore: "L'orologio della torre batte la mezzanotte. L'indagine è conclusa. La giustizia trionfa."
+    successMessage: "\"Il Tempo\" — ma il tempo stringe anche per noi. Un nuovo fascicolo è arrivato dal dipartimento...",
+    lore: "L'orologio della torre batte la mezzanotte. Ma il caso non è ancora chiuso."
+  },
+  {
+    id: 17,
+    title: "La Stanza delle Equazioni",
+    subtitle: "I simboli nascondono numeri",
+    type: "equations",
+    difficulty: 4,
+    icon: "⚖️",
+    description: "Sul pavimento della stanza segreta, qualcuno ha tracciato equazioni con simboli misteriosi. Trova il valore di ogni simbolo.",
+    question: "Risolvi il sistema di equazioni:\n\n🔴 + 🔴 + 🔴 = 15\n🔵 + 🔴 + 🔵 = 19\n🟢 + 🔵 + 🔴 = 15\n\n🟢 + 🔵 + 🟢 = ?\n\nQuale numero si ottiene?",
+    answer: "13",
+    acceptedAnswers: ["13", "tredici"],
+    hints: [
+      "Dalla prima equazione: 🔴 = ?",
+      "🔴 = 5, quindi dalla seconda: 2×🔵 + 5 = 19...",
+      "🔴=5, 🔵=7, 🟢=3. Ora calcola 🟢+🔵+🟢."
+    ],
+    successMessage: "13! Un sistema di equazioni risolto alla perfezione. I numeri 5, 7, 3 erano le cifre di una combinazione...",
+    lore: "La stanza segreta contiene equazioni tracciate col gesso. Ogni simbolo cela un numero."
+  },
+  {
+    id: 18,
+    title: "Il Cifrario del Conte",
+    subtitle: "Un cifrario che nemmeno Cesare potrebbe rompere",
+    type: "vigenere",
+    difficulty: 4,
+    icon: "🗝️",
+    description: "Un messaggio cifrato con il Cifrario di Vigenère — più complesso del Cifrario di Cesare. Ogni lettera usa uno spostamento diverso, ciclando sulla parola chiave.",
+    question: "Il messaggio cifrato è:\n\n« F  Q  S  V  R »\n\nLa chiave è: RE\n\nMetodo: per decifrare, sottrai la posizione\ndella lettera-chiave da quella cifrata.\n(A=0, B=1, C=2, ... R=17, E=4)\n\nF(5) − R(17) = ?\nQ(16) − E(4) = ?\nS(18) − R(17) = ?\n...e così via (se il risultato è negativo, aggiungi 26)\n\nQuale parola si nasconde?",
+    answer: "ombra",
+    acceptedAnswers: ["ombra", "l'ombra", "un'ombra"],
+    hints: [
+      "F(5)−R(17) = 5−17 = −12 → −12+26 = 14 = O",
+      "Q(16)−E(4) = 12 = M. Quindi le prime due lettere sono O-M...",
+      "O-M-B-R-A: una parola che segue tutti ma nessuno riesce a toccare."
+    ],
+    successMessage: "\"Ombra\" — il nome in codice del mandante. Il cifrario di Vigenère non è bastato a proteggerlo.",
+    lore: "Nella biblioteca del conte, un messaggio cifrato con un metodo più sofisticato di quello di Cesare."
+  },
+  {
+    id: 19,
+    title: "La Serie del Diavolo",
+    subtitle: "Ogni numero descrive il precedente",
+    type: "sequence",
+    difficulty: 4,
+    icon: "😈",
+    description: "Una sequenza diabolica incisa sulla porta di una cripta. Non è un pattern matematico tradizionale — ogni numero DESCRIVE il precedente.",
+    question: "Osserva la sequenza:\n\n1\n11\n21\n1211\n111221\n?\n\nOgni termine descrive il precedente.\n\"1\" → si legge \"un 1\" → 11\n\"11\" → si legge \"due 1\" → 21\n\"21\" → si legge \"un 2, un 1\" → 1211\n\nQual è il prossimo termine?",
+    answer: "312211",
+    acceptedAnswers: ["312211"],
+    hints: [
+      "Leggi ad alta voce il numero 111221...",
+      "111221 = tre 1, due 2, un 1...",
+      "\"tre 1\" = 31, \"due 2\" = 22, \"un 1\" = 11 → ?"
+    ],
+    successMessage: "312211! La sequenza \"look-and-say\" di Conway. Ogni termine è la descrizione verbale del precedente. Mente diabolica!",
+    lore: "La porta della cripta si apre solo con il numero giusto. La sequenza incisa è diversa da qualsiasi altra."
+  },
+  {
+    id: 20,
+    title: "Il Ponte dei Sospetti",
+    subtitle: "Il tempo è il nemico",
+    type: "optimization",
+    difficulty: 4,
+    icon: "🌉",
+    description: "Quattro sospettati devono attraversare un ponte pericolante di notte. Il tempo stringe — ogni secondo conta.",
+    question: "Quattro persone devono attraversare un ponte\ndi notte con UNA sola torcia.\nIl ponte regge massimo 2 persone alla volta.\nChi attraversa deve portare la torcia.\n\nTempi di attraversamento:\nA = 1 min, B = 2 min, C = 5 min, D = 10 min\n\nIn coppia, vanno alla velocità del più lento.\nLa torcia deve essere riportata indietro\nda qualcuno ogni volta.\n\nQual è il tempo MINIMO (in minuti)\nper far attraversare tutti e quattro?",
+    answer: "17",
+    acceptedAnswers: ["17", "diciassette", "17 minuti"],
+    hints: [
+      "La strategia ovvia (il più veloce accompagna tutti) non è ottimale...",
+      "Conviene far attraversare C e D INSIEME per risparmiare tempo...",
+      "A+B vanno (2min), A torna (1min), C+D vanno (10min), B torna (2min), A+B vanno (2min) = ?"
+    ],
+    successMessage: "17 minuti! La strategia ottimale: far attraversare i due più lenti insieme. Ottimizzazione degna di un genio!",
+    lore: "I sospettati fuggono nella notte. Il ponte sul fiume è l'unica via d'uscita."
+  },
+  {
+    id: 21,
+    title: "I Numeri Romani del Morto",
+    subtitle: "L'ultimo messaggio scritto in un codice antico",
+    type: "roman",
+    difficulty: 4,
+    icon: "🏛️",
+    description: "La vittima ha inciso numeri romani sul pavimento prima di morire. Ogni numero corrisponde a una lettera dell'alfabeto (1=A, 2=B, ... 26=Z).",
+    question: "La vittima ha scritto col sangue:\n\nIV · V · XII · IX · XX · XX · XV\n\nConverti ogni numero romano in un numero,\npoi trasforma ogni numero in una lettera\n(1=A, 2=B, 3=C, ... 26=Z).\n\nQuale parola si forma?",
+    answer: "delitto",
+    acceptedAnswers: ["delitto", "il delitto", "un delitto"],
+    hints: [
+      "IV=4, V=5, XII=12, IX=9...",
+      "4=D, 5=E, 12=L, 9=I...",
+      "D-E-L-I-T-T-O: un sinonimo di crimine."
+    ],
+    successMessage: "\"Delitto\" — la vittima ha nominato la natura del crimine stesso. I numeri romani erano il suo ultimo atto di coraggio.",
+    lore: "La scena del crimine rivela un messaggio inciso dal morente. Numeri romani tracciati sul marmo."
+  },
+  {
+    id: 22,
+    title: "L'Enigma di Einstein",
+    subtitle: "Solo il 2% delle persone riesce a risolverlo",
+    type: "logic",
+    difficulty: 5,
+    icon: "🧠",
+    description: "Un classico enigma di deduzione logica. Tre case, tre abitanti, quattro indizi. Solo la logica pura può risolvere il caso.",
+    question: "Tre case in fila: Rossa, Blu, Verde.\nTre abitanti: Anna, Bruno, Carlo.\n\n1. La casa Verde è all'estrema destra.\n2. La casa Blu è al centro.\n3. Anna NON vive nella casa Rossa.\n4. Bruno vive a sinistra di Carlo.\n\nChi vive nella casa Rossa?",
+    answer: "bruno",
+    acceptedAnswers: ["bruno"],
+    hints: [
+      "Dagli indizi 1 e 2: l'ordine delle case è Rossa-Blu-Verde.",
+      "Bruno è a sinistra di Carlo (indizio 4). Se Bruno fosse al centro (Blu), Carlo sarebbe a destra (Verde) e Anna a sinistra (Rossa) — ma l'indizio 3 dice che Anna non è nella Rossa...",
+      "Quindi Bruno dev'essere nella posizione 1: la casa Rossa."
+    ],
+    successMessage: "Bruno vive nella casa Rossa! Deduzione logica perfetta. Einstein sarebbe fiero di te.",
+    lore: "Un enigma logico trovato nella cassaforte del professore. Solo chi ragiona come Einstein può proseguire."
+  },
+  {
+    id: 23,
+    title: "Il Paradosso delle Due Porte",
+    subtitle: "Una domanda per la libertà",
+    type: "logic",
+    difficulty: 5,
+    icon: "🚪",
+    description: "Il classico paradosso delle due porte e delle due guardie. Una dice sempre la verità, l'altra mente sempre. Solo UNA domanda ti separa dalla libertà.",
+    question: "Sei davanti a due porte: A e B.\nUna porta alla libertà, l'altra alla condanna.\n\nDue guardie: una dice SEMPRE la verità,\nl'altra MENTE sempre. Non sai chi è chi.\n\nChiedi a una guardia:\n«Se chiedessi all'ALTRA guardia\nquale porta porta alla libertà,\nquale indicherebbe?»\n\nLa guardia indica la Porta A.\n\nQuale porta scegli?",
+    answer: "b",
+    acceptedAnswers: ["b", "porta b", "la porta b", "la b"],
+    hints: [
+      "Pensa a cosa succede con ENTRAMBI i casi: chiedi al veritiero o al bugiardo...",
+      "Se chiedi al veritiero: lui sa che il bugiardo indicherebbe la porta SBAGLIATA, quindi ti dice quella sbagliata. Se chiedi al bugiardo: lui sa che il veritiero indicherebbe quella GIUSTA, ma mente, e ti dice quella sbagliata.",
+      "In ENTRAMBI i casi la guardia indica la porta SBAGLIATA. Se dice A, scegli B!"
+    ],
+    successMessage: "Porta B! In entrambi i casi — che tu chieda al veritiero o al bugiardo — la risposta indica SEMPRE la porta sbagliata. Logica paradossale magistrale!",
+    lore: "Una prigione sotterranea con due porte. Il destino del detective dipende da un'unica domanda."
+  },
+  {
+    id: 24,
+    title: "Il Testamento del Genio",
+    subtitle: "L'ultimo caso. Solo per menti superiori.",
+    type: "multistep",
+    difficulty: 5,
+    icon: "🏆",
+    description: "Il caso definitivo richiede di combinare matematica, logica e attenzione. Tre passaggi, un'unica risposta finale.",
+    question: "Il testamento del genio criminale recita:\n\n«Il mio segreto giace dove si incontrano\ntre numeri.\n\nI. Il primo numero primo dopo 100.\nII. 2 elevato alla 7ª potenza.\nIII. Sottrai il primo dal secondo.\n\nIl risultato è la chiave di tutto.»\n\nQual è il numero finale?",
+    answer: "27",
+    acceptedAnswers: ["27", "ventisette"],
+    hints: [
+      "Il primo numero primo dopo 100: 101 è primo? 101 non è divisibile per 2, 3, 5, 7... sì, è primo!",
+      "2⁷ = 2×2×2×2×2×2×2 = 128",
+      "128 − 101 = ?"
+    ],
+    successMessage: "27! Il primo numero primo dopo 100 è 101, 2⁷ = 128, e 128 − 101 = 27. Il caso è definitivamente chiuso. Sei un detective leggendario!",
+    lore: "Il testamento finale del genio criminale. Solo chi padroneggia numeri e logica può decifrarlo."
   }
 ]
 

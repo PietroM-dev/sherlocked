@@ -103,6 +103,11 @@ function getTypeLabel(type) {
     phone: '📞 Codice Telefonico',
     grid: '🏛️ Labirinto di Lettere',
     logic: '🤫 Deduzione Logica',
+    equations: '⚖️ Sistema di Equazioni',
+    vigenere: '🗝️ Cifrario di Vigenère',
+    optimization: '🌉 Ottimizzazione',
+    roman: '🏛️ Numeri Romani',
+    multistep: '🏆 Enigma a Strati',
   }
   return labels[type] || '🔍 Enigma'
 }
