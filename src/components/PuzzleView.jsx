@@ -3,13 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
 import puzzles from '../data/puzzles'
 import secretPuzzles from '../data/secretPuzzles'
+import metaPuzzles from '../data/metaPuzzles'
 import SecretToast from './SecretToast'
 
-// Combined lookup for both regular and secret puzzles
+// Combined lookup for regular, secret, and meta puzzles
 function findPuzzle(id) {
   const numId = Number(id)
   if (!isNaN(numId)) {
     return puzzles.find(p => p.id === numId)
+  }
+  if (id.startsWith('m')) {
+    return metaPuzzles.find(p => p.id === id)
   }
   return secretPuzzles.find(p => p.id === id)
 }
@@ -21,6 +25,7 @@ export default function PuzzleView() {
 
   const puzzle = findPuzzle(id)
   const isSecret = puzzle?.secret === true
+  const isMeta = puzzle?.meta === true
   const [answer, setAnswer] = useState('')
   const [hintsUsed, setHintsUsed] = useState(0)
   const [feedback, setFeedback] = useState(null)
@@ -91,8 +96,24 @@ export default function PuzzleView() {
     )
   }
 
+  // For meta puzzles, check if all required puzzles are solved
+  if (isMeta && !puzzle.requiredPuzzles.every(pid => isSolved(pid))) {
+    return (
+      <div className="puzzle-view">
+        <div className="puzzle-locked">
+          <div className="locked-icon">🔗</div>
+          <h2>Fascicolo Incompleto</h2>
+          <p>Devi risolvere tutti i casi collegati per accedere a questo enigma.</p>
+          <button className="btn btn-primary" onClick={() => navigate('/cases')}>
+            Torna ai Casi
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // For regular puzzles, check unlock
-  if (!isSecret && !isUnlocked(puzzle.id) && !isSolved(puzzle.id)) {
+  if (!isSecret && !isMeta && !isUnlocked(puzzle.id) && !isSolved(puzzle.id)) {
     return (
       <div className="puzzle-view">
         <div className="puzzle-locked">
@@ -115,7 +136,7 @@ export default function PuzzleView() {
     const normalizedInput = normalize(answer)
 
     // Easter egg: check for "221b" in any regular puzzle
-    if (!isSecret && (normalizedInput === '221b' || normalizedInput === '221bbakerstreet')) {
+    if (!isSecret && !isMeta && (normalizedInput === '221b' || normalizedInput === '221bbakerstreet')) {
       handleBakerEgg()
       return
     }
@@ -150,23 +171,23 @@ export default function PuzzleView() {
   }
 
   // Next case logic (only for regular puzzles)
-  const nextCase = isSecret ? null : puzzles.find(p => p.id === puzzle.id + 1)
+  const nextCase = (isSecret || isMeta) ? null : puzzles.find(p => p.id === puzzle.id + 1)
 
   if (showLore) {
     return (
       <div className="puzzle-view">
-        <div className={`lore-screen ${isSecret ? 'lore-secret' : ''}`}>
+        <div className={`lore-screen ${isSecret ? 'lore-secret' : ''} ${isMeta ? 'lore-meta' : ''}`}>
           <div className="lore-case-number">
-            {isSecret ? '🔓 Fascicolo Segreto' : `Caso #${puzzle.id}`}
+            {isMeta ? '🔗 Enigma Collegato' : isSecret ? '🔓 Fascicolo Segreto' : `Caso #${puzzle.id}`}
           </div>
           <h1 className="lore-title">{puzzle.title}</h1>
           <div className="lore-divider">
-            <span>{isSecret ? '◆◆◆' : '◆'}</span>
+            <span>{isMeta ? '◆◆' : isSecret ? '◆◆◆' : '◆'}</span>
           </div>
           <p className="lore-text">{puzzle.lore}</p>
           <p className="lore-description">{puzzle.description}</p>
           <button 
-            className={`btn ${isSecret ? 'btn-secret' : 'btn-primary'}`}
+            className={`btn ${isMeta ? 'btn-meta' : isSecret ? 'btn-secret' : 'btn-primary'}`}
             onClick={() => setShowLore(false)}
           >
             Esamina l'Enigma →
@@ -178,7 +199,7 @@ export default function PuzzleView() {
 
   return (
     <div className="puzzle-view">
-      <header className={`puzzle-header ${isSecret ? 'puzzle-header-secret' : ''}`}>
+      <header className={`puzzle-header ${isSecret ? 'puzzle-header-secret' : ''} ${isMeta ? 'puzzle-header-meta' : ''}`}>
         <button className="btn-back" onClick={() => navigate('/cases')}>
           ← Casi
         </button>
@@ -196,7 +217,7 @@ export default function PuzzleView() {
             {puzzle.icon}
           </span>
           <span className="puzzle-header-title">
-            {isSecret ? `Segreto — ${puzzle.title}` : `Caso #${puzzle.id} — ${puzzle.title}`}
+            {isMeta ? `Collegato — ${puzzle.title}` : isSecret ? `Segreto — ${puzzle.title}` : `Caso #${puzzle.id} — ${puzzle.title}`}
           </span>
         </div>
         <div className="puzzle-header-right">
@@ -207,9 +228,9 @@ export default function PuzzleView() {
       </header>
 
       <div className="puzzle-content">
-        <div className={`puzzle-question-card ${isSecret ? 'secret-question-card' : ''}`}>
+        <div className={`puzzle-question-card ${isSecret ? 'secret-question-card' : ''} ${isMeta ? 'meta-question-card' : ''}`}>
           <div className="question-type-badge">
-            {isSecret ? `🔓 ${getTypeLabel(puzzle.type)}` : getTypeLabel(puzzle.type)}
+            {isMeta ? `🔗 ${getTypeLabel(puzzle.type)}` : isSecret ? `🔓 ${getTypeLabel(puzzle.type)}` : getTypeLabel(puzzle.type)}
           </div>
           <pre className="puzzle-question">{puzzle.question}</pre>
         </div>
@@ -282,7 +303,7 @@ export default function PuzzleView() {
               >
                 Prossimo Caso →
               </button>
-            ) : !isSecret ? (
+            ) : !isSecret && !isMeta ? (
               <button
                 className="btn btn-primary"
                 onClick={() => navigate('/victory')}
@@ -336,6 +357,7 @@ function getTypeLabel(type) {
     roman: '🏛️ Numeri Romani',
     multistep: '🏆 Enigma a Strati',
     binary: '💀 Codice Binario',
+    meta: '🔗 Enigma Collegato',
   }
   return labels[type] || '🔍 Enigma'
 }

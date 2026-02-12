@@ -4,6 +4,7 @@ import { useProgress } from '../hooks/useProgress'
 import { useKonamiCode } from '../hooks/useKonamiCode'
 import puzzles from '../data/puzzles'
 import secretPuzzles from '../data/secretPuzzles'
+import metaPuzzles from '../data/metaPuzzles'
 import SecretToast from './SecretToast'
 
 export default function CaseSelect() {
@@ -43,6 +44,12 @@ export default function CaseSelect() {
     isSecretUnlocked(sp.secretTrigger)
   )
 
+  // Get available meta puzzles (all required puzzles must be solved)
+  const availableMetas = metaPuzzles.filter(mp =>
+    mp.requiredPuzzles.every(pid => isSolved(pid))
+  )
+  const totalMetaSolved = metaPuzzles.filter(mp => isSolved(mp.id)).length
+
   return (
     <div className="case-select">
       <header className="case-header">
@@ -53,6 +60,7 @@ export default function CaseSelect() {
           <h1 className="case-title">Fascicolo dei Casi</h1>
           <p className="case-subtitle">
             {totalSolved} di {puzzles.length} casi risolti
+            {totalMetaSolved > 0 && ` · ${totalMetaSolved} collegati`}
             {totalSecretsSolved > 0 && ` · ${totalSecretsSolved} segreti`}
           </p>
         </div>
@@ -123,6 +131,63 @@ export default function CaseSelect() {
           )
         })}
       </div>
+
+      {/* Meta / Connected Cases Section */}
+      {availableMetas.length > 0 && (
+        <div className="meta-section">
+          <div className="meta-section-header">
+            <div className="meta-section-line" />
+            <h2 className="meta-section-title">🔗 Enigmi Collegati</h2>
+            <div className="meta-section-line" />
+          </div>
+          <p className="meta-section-subtitle">
+            La risposta si nasconde nei casi già risolti
+          </p>
+          <div className="cases-grid">
+            {availableMetas.map((puzzle) => {
+              const solved = isSolved(puzzle.id)
+              return (
+                <div
+                  key={puzzle.id}
+                  className={`case-card meta-card ${solved ? 'solved' : 'unlocked'}`}
+                  onClick={() => navigate(`/case/${puzzle.id}`)}
+                >
+                  <div className="case-card-header">
+                    <span className="case-number meta-label">Collegato</span>
+                    <span className="case-difficulty">
+                      {'★'.repeat(puzzle.difficulty)}{'☆'.repeat(5 - puzzle.difficulty)}
+                    </span>
+                  </div>
+
+                  <div className="case-card-icon">
+                    {puzzle.icon}
+                  </div>
+
+                  <h3 className="case-card-title">
+                    {puzzle.title}
+                  </h3>
+
+                  <p className="case-card-subtitle">
+                    {puzzle.subtitle}
+                  </p>
+
+                  {solved && (
+                    <div className="case-solved-badge">
+                      ✓ Risolto
+                    </div>
+                  )}
+
+                  <div className="case-card-type">
+                    <span className="type-badge meta-type-badge">
+                      🔗 {puzzle.requiredPuzzles.length} casi collegati
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Secret Cases Section */}
       {visibleSecrets.length > 0 && (
@@ -214,6 +279,7 @@ function getTypeLabel(type) {
     optimization: '🌉 Ottimizzazione',
     roman: '🏛️ Numeri Romani',
     multistep: '🏆 Enigma a Strati',
+    meta: '🔗 Enigma Collegato',
   }
   return labels[type] || '🔍 Enigma'
 }
