@@ -1,23 +1,34 @@
 import { Routes, Route } from 'react-router-dom'
-import { useProgress } from './hooks/useProgress'
+import { useAuth } from './hooks/useAuth'
 import Landing from './components/Landing'
 import CaseSelect from './components/CaseSelect'
 import PuzzleView from './components/PuzzleView'
 import Victory from './components/Victory'
 import Leaderboard from './components/Leaderboard'
-import NameInput from './components/NameInput'
+import SignIn from './components/SignIn'
 
 function App() {
-  const { username, setUsername } = useProgress()
+  const { isAuthenticated, loading } = useAuth()
+
+  // Show nothing while Firebase checks auth state
+  if (loading) {
+    return (
+      <div className="app">
+        <div className="fog fog-1" />
+        <div className="fog fog-2" />
+        <div className="auth-loading">
+          <div className="loading-spinner" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="app">
       <div className="fog fog-1" />
       <div className="fog fog-2" />
 
-      {!username && (
-        <NameInput onSubmit={setUsername} />
-      )}
+      {!isAuthenticated && <SignIn />}
 
       <Routes>
         <Route path="/" element={<Landing />} />

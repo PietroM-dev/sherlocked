@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProgress } from '../hooks/useProgress'
+import { useAuth } from '../hooks/useAuth'
 import { useKonamiCode } from '../hooks/useKonamiCode'
 import puzzles from '../data/puzzles'
 import secretPuzzles from '../data/secretPuzzles'
@@ -11,8 +12,9 @@ export default function CaseSelect() {
   const navigate = useNavigate()
   const {
     isSolved, isUnlocked, totalSolved, totalSecretsSolved,
-    resetProgress, unlockSecret, isSecretUnlocked, unlockedSecrets
+    resetProgress, unlockSecret, isSecretUnlocked, unlockedSecrets, user
   } = useProgress()
+  const { logOut } = useAuth()
 
   const allSolved = totalSolved === puzzles.length
 
@@ -65,6 +67,15 @@ export default function CaseSelect() {
           </p>
         </div>
         <div className="header-right header-actions">
+          {user?.photoURL && (
+            <img
+              className="header-avatar"
+              src={user.photoURL}
+              alt={user.displayName}
+              referrerPolicy="no-referrer"
+              title={user.displayName}
+            />
+          )}
           <button
             className="btn-leaderboard"
             onClick={() => navigate('/leaderboard')}
@@ -77,6 +88,9 @@ export default function CaseSelect() {
               Ricomincia
             </button>
           )}
+          <button className="btn-logout" onClick={logOut} title="Esci">
+            ↗
+          </button>
         </div>
       </header>
 

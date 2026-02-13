@@ -7,14 +7,10 @@ import puzzles from '../data/puzzles'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
-  const { username, totalSolved, totalSecretsSolved } = useProgress()
+  const { user, username, totalSolved, totalSecretsSolved, totalMetaSolved } = useProgress()
   const [entries, setEntries] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-
-  const totalMetaSolved = useProgress().solvedCases?.filter(
-    id => typeof id === 'string' && id.startsWith('m')
-  ).length || 0
 
   useEffect(() => {
     let cancelled = false
@@ -58,7 +54,11 @@ export default function Leaderboard() {
       {username && (
         <div className="leaderboard-my-stats">
           <div className="my-stats-name">
-            <span className="my-stats-icon">🕵️</span>
+            {user?.photoURL ? (
+              <img className="my-stats-avatar" src={user.photoURL} alt="" referrerPolicy="no-referrer" />
+            ) : (
+              <span className="my-stats-icon">🕵️</span>
+            )}
             <span>{username}</span>
           </div>
           <div className="my-stats-scores">
@@ -133,7 +133,7 @@ export default function Leaderboard() {
               </thead>
               <tbody>
                 {entries.map((entry) => {
-                  const isMe = username && entry.name.toLowerCase() === username.toLowerCase()
+                  const isMe = user && entry.id === user.uid
                   return (
                     <tr
                       key={entry.id}
@@ -143,8 +143,13 @@ export default function Leaderboard() {
                         {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
                       </td>
                       <td className="col-name">
-                        {entry.name}
-                        {isMe && <span className="me-badge">tu</span>}
+                        <span className="entry-name-cell">
+                          {entry.photoURL && (
+                            <img className="entry-avatar" src={entry.photoURL} alt="" referrerPolicy="no-referrer" />
+                          )}
+                          <span>{entry.name}</span>
+                          {isMe && <span className="me-badge">tu</span>}
+                        </span>
                       </td>
                       <td className="col-cases">{entry.puzzlesSolved || 0}</td>
                       <td className="col-secrets">{entry.secretsSolved || 0}</td>

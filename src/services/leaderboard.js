@@ -7,17 +7,17 @@ const COLLECTION = 'leaderboard'
 
 /**
  * Submit or update a player's score on the leaderboard.
- * Uses the sanitized username as the document ID to prevent duplicates.
+ * Uses the Firebase Auth UID as document ID (unique per Google account).
  */
-export async function submitScore(username, scores) {
-  if (!isConfigured || !db) return false
+export async function submitScore(user, scores) {
+  if (!isConfigured || !db || !user?.uid) return false
 
   try {
-    const docId = username.toLowerCase().replace(/\s+/g, '_')
-    const ref = doc(db, COLLECTION, docId)
+    const ref = doc(db, COLLECTION, user.uid)
 
     await setDoc(ref, {
-      name: username,
+      name: user.displayName || 'Detective',
+      photoURL: user.photoURL || null,
       puzzlesSolved: scores.puzzlesSolved || 0,
       secretsSolved: scores.secretsSolved || 0,
       metaSolved: scores.metaSolved || 0,

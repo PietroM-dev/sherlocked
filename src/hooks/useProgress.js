@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { submitScore } from '../services/leaderboard'
+import { useAuth } from './useAuth'
 
 const STORAGE_KEY = 'sherlocked-progress'
 const SECRETS_KEY = 'sherlocked-secrets'
 const VISIT_KEY = 'sherlocked-last-visit'
-const NAME_KEY = 'sherlocked-username'
 
 export function useProgress() {
+  const { user, isAuthenticated } = useAuth()
+
   const [solvedCases, setSolvedCases] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
@@ -22,14 +24,6 @@ export function useProgress() {
       return saved ? JSON.parse(saved) : []
     } catch {
       return []
-    }
-  })
-
-  const [username, setUsernameState] = useState(() => {
-    try {
-      return localStorage.getItem(NAME_KEY) || ''
-    } catch {
-      return ''
     }
   })
 
@@ -61,21 +55,16 @@ export function useProgress() {
   const totalSecretsSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('s')).length
   const totalMetaSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('m')).length
 
-  // Sync to leaderboard whenever scores or username change
+  // Sync to leaderboard whenever scores or auth change
   useEffect(() => {
-    if (!username) return
+    if (!isAuthenticated || !user) return
 
-    submitScore(username, {
+    submitScore(user, {
       puzzlesSolved: totalSolved,
       secretsSolved: totalSecretsSolved,
       metaSolved: totalMetaSolved,
     })
-  }, [username, totalSolved, totalSecretsSolved, totalMetaSolved])
-
-  const setUsername = useCallback((name) => {
-    setUsernameState(name)
-    localStorage.setItem(NAME_KEY, name)
-  }, [])
+  }, [user, isAuthenticated, totalSolved, totalSecretsSolved, totalMetaSolved])
 
   const solveCase = (caseId) => {
     setSolvedCases(prev => {
@@ -112,7 +101,6 @@ export function useProgress() {
     setUnlockedSecrets([])
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(SECRETS_KEY)
-    // Note: we don't reset username on progress reset
   }
 
   const nextUnsolvedCase = (() => {
@@ -159,7 +147,8 @@ export function useProgress() {
     nextUnsolvedCase,
     lastVisit,
     lastVisitFormatted,
-    username,
-    setUsername,
+    // Auth info (derived from useAuth)
+    user,
+    username: user?.displayName || '',
   }
 }
