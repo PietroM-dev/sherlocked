@@ -7,7 +7,7 @@ import puzzles from '../data/puzzles'
 
 export default function Leaderboard() {
   const navigate = useNavigate()
-  const { user, username, totalSolved, totalSecretsSolved, totalMetaSolved } = useProgress()
+  const { user, username, totalSolved, totalSecretsSolved, totalMetaSolved, totalHintsUsed, totalScore } = useProgress()
   const [entries, setEntries] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -35,7 +35,7 @@ export default function Leaderboard() {
     return () => { cancelled = true }
   }, [])
 
-  const myTotalScore = totalSolved + totalSecretsSolved * 2 + totalMetaSolved * 3
+  const myTotalScore = totalScore
 
   return (
     <div className="leaderboard">
@@ -78,6 +78,12 @@ export default function Leaderboard() {
                 <span className="my-stat-label">collegati</span>
               </div>
             )}
+            {totalHintsUsed > 0 && (
+              <div className="my-stat my-stat-penalty">
+                <span className="my-stat-value">−{totalHintsUsed}</span>
+                <span className="my-stat-label">indizi</span>
+              </div>
+            )}
             <div className="my-stat my-stat-total">
               <span className="my-stat-value">{myTotalScore}</span>
               <span className="my-stat-label">punti</span>
@@ -88,7 +94,7 @@ export default function Leaderboard() {
 
       {/* Scoring explanation */}
       <div className="scoring-info">
-        <span>Punteggio: Caso = 1 pt · Segreto = 2 pt · Collegato = 3 pt</span>
+        <span>Caso = 3 pt · Segreto = 5 pt · Collegato = 7 pt · Ogni indizio = −1 pt</span>
       </div>
 
       {/* Leaderboard table */}
@@ -128,6 +134,7 @@ export default function Leaderboard() {
                   <th className="col-cases">Casi</th>
                   <th className="col-secrets">Segreti</th>
                   <th className="col-meta">Collegati</th>
+                  <th className="col-hints">Indizi</th>
                   <th className="col-score">Punti</th>
                 </tr>
               </thead>
@@ -154,6 +161,7 @@ export default function Leaderboard() {
                       <td className="col-cases">{entry.puzzlesSolved || 0}</td>
                       <td className="col-secrets">{entry.secretsSolved || 0}</td>
                       <td className="col-meta">{entry.metaSolved || 0}</td>
+                      <td className="col-hints">{entry.hintsUsed ? `−${entry.hintsUsed}` : '0'}</td>
                       <td className="col-score">{entry.totalScore || 0}</td>
                     </tr>
                   )

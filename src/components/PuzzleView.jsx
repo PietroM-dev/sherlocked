@@ -21,7 +21,7 @@ function findPuzzle(id) {
 export default function PuzzleView() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { solveCase, isSolved, isUnlocked, unlockSecret, isSecretUnlocked } = useProgress()
+  const { solveCase, isSolved, isUnlocked, unlockSecret, isSecretUnlocked, getCaseScore } = useProgress()
 
   const puzzle = findPuzzle(id)
   const isSecret = puzzle?.secret === true
@@ -147,7 +147,7 @@ export default function PuzzleView() {
 
     if (isCorrect) {
       setSolved(true)
-      solveCase(puzzle.id)
+      solveCase(puzzle.id, hintsUsed)
       setFeedback({ type: 'success', message: puzzle.successMessage })
       setShowSaveToast(true)
       setTimeout(() => setShowSaveToast(false), 3000)
@@ -291,6 +291,29 @@ export default function PuzzleView() {
                 💡 Mostra Indizio ({hintsUsed}/{puzzle.hints.length})
               </button>
             )}
+          </div>
+        )}
+
+        {solved && (
+          <div className="solved-score-summary">
+            {(() => {
+              const score = getCaseScore(puzzle.id)
+              const hints = hintsUsed
+              const basePoints = isSecret ? 5 : isMeta ? 7 : 3
+              if (score === null) return null
+              return (
+                <div className="score-breakdown">
+                  <span className="score-earned">+{score} pt</span>
+                  {hints > 0 ? (
+                    <span className="score-penalty">
+                      ({basePoints} base − {hints} {hints === 1 ? 'indizio' : 'indizi'})
+                    </span>
+                  ) : (
+                    <span className="score-perfect">Perfetto! Nessun indizio usato</span>
+                  )}
+                </div>
+              )
+            })()}
           </div>
         )}
 

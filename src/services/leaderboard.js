@@ -8,6 +8,7 @@ const COLLECTION = 'leaderboard'
 /**
  * Submit or update a player's score on the leaderboard.
  * Uses the Firebase Auth UID as document ID (unique per Google account).
+ * totalScore is pre-calculated with hint penalties.
  */
 export async function submitScore(user, scores) {
   if (!isConfigured || !db || !user?.uid) return false
@@ -21,7 +22,8 @@ export async function submitScore(user, scores) {
       puzzlesSolved: scores.puzzlesSolved || 0,
       secretsSolved: scores.secretsSolved || 0,
       metaSolved: scores.metaSolved || 0,
-      totalScore: (scores.puzzlesSolved || 0) + (scores.secretsSolved || 0) * 2 + (scores.metaSolved || 0) * 3,
+      hintsUsed: scores.hintsUsed || 0,
+      totalScore: scores.totalScore || 0,
       lastUpdated: serverTimestamp(),
     }, { merge: true })
 
