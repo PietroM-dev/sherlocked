@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
+import { submitScore } from '../services/leaderboard'
 
 const STORAGE_KEY = 'sherlocked-progress'
 const SECRETS_KEY = 'sherlocked-secrets'
 const VISIT_KEY = 'sherlocked-last-visit'
+const NAME_KEY = 'sherlocked-username'
 
 export function useProgress() {
   const [solvedCases, setSolvedCases] = useState(() => {
@@ -20,6 +22,14 @@ export function useProgress() {
       return saved ? JSON.parse(saved) : []
     } catch {
       return []
+    }
+  })
+
+  const [username, setUsernameState] = useState(() => {
+    try {
+      return localStorage.getItem(NAME_KEY) || ''
+    } catch {
+      return ''
     }
   })
 
@@ -44,6 +54,27 @@ export function useProgress() {
   // Update last visit
   useEffect(() => {
     localStorage.setItem(VISIT_KEY, new Date().toISOString())
+  }, [])
+
+  // Computed scores
+  const totalSolved = solvedCases.filter(id => typeof id === 'number').length
+  const totalSecretsSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('s')).length
+  const totalMetaSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('m')).length
+
+  // Sync to leaderboard whenever scores or username change
+  useEffect(() => {
+    if (!username) return
+
+    submitScore(username, {
+      puzzlesSolved: totalSolved,
+      secretsSolved: totalSecretsSolved,
+      metaSolved: totalMetaSolved,
+    })
+  }, [username, totalSolved, totalSecretsSolved, totalMetaSolved])
+
+  const setUsername = useCallback((name) => {
+    setUsernameState(name)
+    localStorage.setItem(NAME_KEY, name)
   }, [])
 
   const solveCase = (caseId) => {
@@ -73,7 +104,6 @@ export function useProgress() {
   }, [unlockedSecrets])
 
   const isSecretNew = useCallback((triggerId) => {
-    // A secret is "new" if it's unlocked but the corresponding puzzle isn't solved yet
     return unlockedSecrets.includes(triggerId) && !solvedCases.includes(`s${['konami', 'baker', 'lens', 'shadow'].indexOf(triggerId) + 1}`)
   }, [unlockedSecrets, solvedCases])
 
@@ -82,10 +112,8 @@ export function useProgress() {
     setUnlockedSecrets([])
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(SECRETS_KEY)
+    // Note: we don't reset username on progress reset
   }
-
-  const totalSolved = solvedCases.filter(id => typeof id === 'number').length
-  const totalSecretsSolved = solvedCases.filter(id => typeof id === 'string' && id.startsWith('s')).length
 
   const nextUnsolvedCase = (() => {
     for (let i = 1; i <= 24; i++) {
@@ -127,8 +155,11 @@ export function useProgress() {
     resetProgress,
     totalSolved,
     totalSecretsSolved,
+    totalMetaSolved,
     nextUnsolvedCase,
     lastVisit,
     lastVisitFormatted,
+    username,
+    setUsername,
   }
 }

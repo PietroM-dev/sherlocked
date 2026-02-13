@@ -6,7 +6,7 @@ import SecretToast from './SecretToast'
 
 export default function Landing() {
   const navigate = useNavigate()
-  const { totalSolved, lastVisitFormatted, unlockSecret, isSecretUnlocked } = useProgress()
+  const { totalSolved, lastVisitFormatted, unlockSecret, isSecretUnlocked, username } = useProgress()
   const isReturning = totalSolved > 0 && lastVisitFormatted
 
   // Easter egg: click magnifying glass 5 times
@@ -35,7 +35,7 @@ export default function Landing() {
         {isReturning ? (
           <div className="welcome-back">
             <p className="welcome-back-text">
-              Bentornato, Detective.
+              Bentornato{username ? `, ${username}` : ', Detective'}.
             </p>
             <p className="welcome-back-sub">
               Ultima visita: {lastVisitFormatted}
@@ -43,7 +43,7 @@ export default function Landing() {
           </div>
         ) : (
           <p className="landing-subtitle">
-            Ventiquattro enigmi. Una sola verità.<br />
+            {username ? `Benvenuto, ${username}.` : 'Ventiquattro enigmi. Una sola verità.'}<br />
             Hai la mente per risolvere il caso?
           </p>
         )}
@@ -64,6 +64,13 @@ export default function Landing() {
           >
             <span className="btn-icon">🕵️</span>
             {totalSolved > 0 ? 'Continua l\'Indagine' : 'Inizia l\'Indagine'}
+          </button>
+          <button
+            className="btn btn-secondary btn-leaderboard-landing"
+            onClick={() => navigate('/leaderboard')}
+          >
+            <span className="btn-icon">🏆</span>
+            Classifica
           </button>
         </div>
 

@@ -64,7 +64,14 @@ export default function CaseSelect() {
             {totalSecretsSolved > 0 && ` · ${totalSecretsSolved} segreti`}
           </p>
         </div>
-        <div className="header-right">
+        <div className="header-right header-actions">
+          <button
+            className="btn-leaderboard"
+            onClick={() => navigate('/leaderboard')}
+            title="Classifica"
+          >
+            🏆
+          </button>
           {totalSolved > 0 && (
             <button className="btn-reset" onClick={resetProgress}>
               Ricomincia
